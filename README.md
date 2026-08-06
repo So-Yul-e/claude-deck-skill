@@ -1,6 +1,10 @@
 <h1 align="center">Claude Deck Skill</h1>
 
 <p align="center">
+  <b>English</b> · <a href="README.ko.md">한국어</a>
+</p>
+
+<p align="center">
   Turn structured content into polished, editable PowerPoint decks.<br/>
   Choose the right slide form, generate PPTX, export PDF, and verify embedded fonts in one workflow.
 </p>

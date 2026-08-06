@@ -14,6 +14,7 @@ class PackageContractTests(unittest.TestCase):
     def test_required_public_package_files_exist(self) -> None:
         required = [
             REPO / "README.md",
+            REPO / "README.ko.md",
             REPO / "LICENSE",
             REPO / "THIRD_PARTY_NOTICES.md",
             SKILL / "SKILL.md",
@@ -40,6 +41,15 @@ class PackageContractTests(unittest.TestCase):
 
         openai_yaml = (SKILL / "agents" / "openai.yaml").read_text(encoding="utf-8")
         self.assertIn("$deck", openai_yaml)
+
+    def test_readme_language_switch_and_catalog_claims(self) -> None:
+        english = (REPO / "README.md").read_text(encoding="utf-8")
+        korean = (REPO / "README.ko.md").read_text(encoding="utf-8")
+
+        self.assertIn('href="README.ko.md"', english)
+        self.assertIn('href="README.md"', korean)
+        self.assertIn("20 representative slide types", english)
+        self.assertIn("대표 슬라이드 20종", korean)
 
     def test_catalog_covers_twenty_render_types(self) -> None:
         source = (REPO / "examples" / "build_catalog.py").read_text(encoding="utf-8")
