@@ -1,0 +1,32 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -r deck/requirements.txt
+      - run: python -m unittest discover -s tests -p 'test_*.py'
+      - run: python -m compileall deck/scripts examples
+      - run: bash -n deck/scripts/deps-macos.sh deck/scripts/render-macos.sh
+
+  windows-scripts:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - shell: pwsh
+        run: python -m pip install -r deck/requirements.txt
+      - shell: pwsh
+        run: python examples/build_catalog.py "$env:RUNNER_TEMP\deck-builder-catalog.pptx"
+      - shell: pwsh
+        run: ./tests/test_windows_scripts.ps1

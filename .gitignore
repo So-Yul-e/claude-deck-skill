@@ -1,0 +1,12 @@
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.log
+*.tmp
+examples/output/*
+!examples/output/deck-builder-catalog.pptx
+!examples/output/deck-builder-catalog.pdf
+!examples/output/deck-builder-catalog-contact-sheet.png
+deck/assets/fonts/*.tmp

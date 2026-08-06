@@ -1,0 +1,4 @@
+interface:
+  display_name: "Deck"
+  short_description: "Build and polish elegant PPT decks across macOS and Windows"
+  default_prompt: "Use $deck when the user asks to create, polish, or visually verify a presentation deck."
