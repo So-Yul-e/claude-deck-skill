@@ -15,6 +15,7 @@ class PackageContractTests(unittest.TestCase):
         required = [
             REPO / "README.md",
             REPO / "LICENSE",
+            REPO / "THIRD_PARTY_NOTICES.md",
             SKILL / "SKILL.md",
             SKILL / "agents" / "openai.yaml",
             SKILL / "scripts" / "deck.py",
@@ -80,6 +81,15 @@ class PackageContractTests(unittest.TestCase):
             ("gate", None),
         }
         self.assertTrue(expected.issubset(set(calls)), expected.difference(calls))
+
+    def test_font_license_boundary_is_preserved(self) -> None:
+        notice = (REPO / "THIRD_PARTY_NOTICES.md").read_text(encoding="utf-8")
+        ofl = (SKILL / "assets" / "fonts" / "OFL.txt").read_text(encoding="utf-8")
+
+        self.assertIn("not covered by this project's\nMIT license", notice)
+        self.assertIn("Copyright (c) 2021, Kil Hyung-jin", ofl)
+        self.assertIn("Reserved Font Name 'Pretendard'", ofl)
+        self.assertIn("SIL OPEN FONT LICENSE Version 1.1", ofl)
 
     def test_no_private_paths_or_secret_assignments(self) -> None:
         text_suffixes = {".md", ".py", ".sh", ".ps1", ".yaml", ".yml", ".txt"}

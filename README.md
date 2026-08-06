@@ -1,62 +1,101 @@
 <h1 align="center">Claude Deck Skill</h1>
 
 <p align="center">
-  A Claude skill for building polished PowerPoint decks from reusable slide builders,<br/>
-  with macOS and Windows runtime adapters plus PDF font verification.
+  Turn structured content into polished, editable PowerPoint decks.<br/>
+  Choose the right slide form, generate PPTX, export PDF, and verify embedded fonts in one workflow.
 </p>
 
 <p align="center">
-  <b>Status</b> · macOS validated · Windows adapter beta
+  <a href="https://github.com/So-Yul-e/claude-deck-skill/actions/workflows/ci.yml"><img src="https://github.com/So-Yul-e/claude-deck-skill/actions/workflows/ci.yml/badge.svg" alt="CI status" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/code_license-MIT-blue.svg" alt="Code license: MIT" /></a>
 </p>
 
 <p align="center">
-  <img src="examples/output/deck-builder-catalog-contact-sheet.png" alt="Twenty representative deck builder slide types" width="920" />
+  <b>macOS validated</b> · <b>Windows adapter beta</b> · Claude and Codex compatible
+</p>
+
+<p align="center">
+  <img src="examples/output/deck-builder-catalog-contact-sheet.png" alt="Catalog of twenty representative deck slide types" width="920" />
+</p>
+
+<p align="center">
+  <a href="examples/output/deck-builder-catalog.pptx">Editable 20-slide PPTX</a> ·
+  <a href="examples/output/deck-builder-catalog.pdf">Validated 20-page PDF</a> ·
+  <a href="examples/output/deck-builder-catalog-contact-sheet.png">Full-size contact sheet</a>
 </p>
 
 ---
 
+## What You Can Make
+
+Use the skill for a new deck or to clean up an existing `.pptx` without flattening
+it into images.
+
+| Deck-level use case | Examples |
+|---|---|
+| Strategy and proposals | business plan, product strategy, option comparison, go/no-go recommendation |
+| Reports and roadmaps | executive report, project status, milestones, delivery roadmap |
+| Data storytelling | KPI review, survey results, composition, progress, positioning matrix |
+| Product and case studies | feature narrative, before/after, screenshots, customer voice, outcomes |
+| Explanatory material | process guide, hierarchy, definitions, training or workshop deck |
+| Existing deck cleanup | title hierarchy, internal padding, border noise, visual consistency |
+
+The committed catalog covers **20 representative slide types**. They are backed
+by 18 reusable builder methods; `chart()` produces three catalog forms.
+
+| Content relationship | Slide types |
+|---|---|
+| Narrative and emphasis | cover, section, statement, quote, hero stat |
+| Structure and decisions | bullets, cards, table, definition list, tree, flow, timeline, compare, gate |
+| Data and status | bar chart, column chart, donut chart, progress, matrix |
+| Visual evidence | screenshots and result artifacts |
+
+`bullets()` is deliberately the fallback, not the default. A process becomes a
+flow, dates become a timeline, composition becomes a donut, and pass/fail criteria
+become a gate.
+
 ## Why This Exists
 
-LLM-generated slide decks often fail in the same places: every idea becomes a
-bullet list, typography drifts, PDF export substitutes fonts, and no one checks
-the rendered output. This skill makes deck creation a repeatable workflow:
-choose the right slide shape first, generate an editable PPTX, export to PDF, and
-verify the rendered result.
+LLM-generated decks often collapse every idea into bullet lists. Typography then
+drifts, layouts lose hierarchy, and PDF export silently substitutes fonts. The
+result may be editable, but it is not presentation-ready.
 
-The main packaging decision is one public repository, not separate macOS and
-Windows repos. That keeps the actual deck builder from drifting. The trade-off is
-that Windows support must stay labelled beta until it is validated on a real
-Windows machine.
+This skill turns deck creation into a repeatable contract: identify the content
+relationship, select one primary builder, create an editable PPTX, render it, and
+reject the result if the required fonts are not embedded.
 
-## Install
+## Quick Start
 
-Clone this repository and copy or link the `deck/` folder into Claude's skill
-directory.
+### 1. Install the skill
 
-macOS:
+macOS for Claude:
 
 ```bash
 git clone https://github.com/So-Yul-e/claude-deck-skill.git
+cd claude-deck-skill
 mkdir -p ~/.claude/skills
-ln -s "$PWD/claude-deck-skill/deck" ~/.claude/skills/deck
+ln -s "$(pwd)/deck" ~/.claude/skills/deck
 ```
 
-Windows PowerShell:
+Windows PowerShell for Claude:
 
 ```powershell
 git clone https://github.com/So-Yul-e/claude-deck-skill.git
+$repo = (Resolve-Path ".\claude-deck-skill").Path
 $target = "$HOME\.claude\skills\deck"
 New-Item -ItemType Directory -Force $target | Out-Null
-Copy-Item -Recurse -Force ".\claude-deck-skill\deck\*" $target
+Copy-Item -Recurse -Force "$repo\deck\*" $target
 ```
 
-Codex can use the same payload: install or link `deck/` at
-`~/.codex/skills/deck` (Windows: `$HOME\.codex\skills\deck`). The included
-`deck/agents/openai.yaml` supplies Codex-facing display metadata; the workflow
-contract remains shared in `deck/SKILL.md`.
+Codex uses the same `deck/` payload. Link or copy it to
+`~/.codex/skills/deck` on macOS or `$HOME\.codex\skills\deck` on Windows.
+The shared workflow lives in [`deck/SKILL.md`](deck/SKILL.md), while
+[`deck/agents/openai.yaml`](deck/agents/openai.yaml) supplies Codex-facing metadata.
 
-On first use, ask Claude to run the runtime check. Installers should run only
-after you approve them.
+### 2. Run the runtime check
+
+The check reports what is missing without installing anything. Run `--install`
+only after reviewing the Python, font, and renderer changes.
 
 macOS:
 
@@ -65,43 +104,44 @@ bash ~/.claude/skills/deck/scripts/deps-macos.sh --check
 bash ~/.claude/skills/deck/scripts/deps-macos.sh --install
 ```
 
-Windows:
+Windows beta:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\deck\scripts\deps-windows.ps1" -Check
 powershell -ExecutionPolicy Bypass -File "$HOME\.claude\skills\deck\scripts\deps-windows.ps1" -Install
 ```
 
+### 3. Ask the agent for a deck
+
+Example requests:
+
+```text
+Use $deck to turn this business plan into a 10-slide investor presentation.
+
+Use $deck to create an executive project report with a roadmap, KPIs, and release gate.
+
+Use $deck to polish this PPTX without changing its content or moving its layout boxes.
+```
+
 ## How It Works
 
-Instead of asking the model to "make pretty slides," the skill gives it fixed
-builders with locked spacing, typography, and visual hierarchy. The model decides
-the content relationship, then calls the matching builder:
+```text
+Source content
+    ↓ identify the relationship
+One primary slide builder
+    ↓
+Editable PPTX
+    ↓ macOS or Windows render adapter
+PDF
+    ↓ font and fallback verification
+Deliverable or fail-closed rejection
+```
 
-| Need | Builder |
-|---|---|
-| Title/opening | `cover()` |
-| Section divider | `section()` |
-| One strong claim | `statement()` |
-| Equal text items | `bullets()` |
-| Metrics/options | `cards()` |
-| 3+ column comparison | `table()` |
-| Label + description | `deflist()` |
-| Hierarchy | `tree()` |
-| Process | `flow()` |
-| Roadmap | `timeline()` |
-| Bar/column/donut data | `chart()` |
-| Completion status | `progress()` |
-| Two-axis map | `matrix()` |
-| Screenshots/results | `shots()` |
-| Before/after | `compare()` |
-| User voice | `quote()` |
-| Hero KPI | `stat()` |
-| Go/no-go checklist | `gate()` |
+The model decides the message and relationship. The builder owns spacing,
+typography, hierarchy, and shape construction. That division keeps the deck
+editable while reducing arbitrary layout decisions.
 
-`bullets()` is intentionally the fallback, not the default.
-
-## Example
+### Minimal Python example
 
 ```python
 import sys
@@ -111,121 +151,135 @@ from deck import Deck
 
 d = Deck(palette="indigo", footer="Project · Team")
 d.cover("Quarterly Review", "What changed and what we do next", "2026 Q3")
-d.cards("Top metrics", [("Activation", "42%", "+8pp"), ("Latency", "0.8s", "P95")])
-d.flow("Delivery flow", [("Scope", "decide"), ("Build", "generate"), ("Verify", "render")])
+d.cards("Top metrics", [
+    ("Activation", "42%", "+8pp"),
+    ("Latency", "0.8s", "P95"),
+])
+d.flow("Delivery flow", [
+    ("Scope", "decide"),
+    ("Build", "generate"),
+    ("Verify", "render"),
+])
 d.save("review.pptx")
 ```
 
-Build the 20-type catalog:
+Built-in palettes are `indigo`, `navy`, and `mono`. Projects with an existing
+design system can pass a palette dictionary instead of inventing new colors.
+
+## Key Decisions
+
+The differentiator is not only what was built, but which failure modes were
+intentionally excluded.
+
+| Decision | Rejected alternative | Impact and evidence |
+|---|---|---|
+| Select form before writing slide text | Default every slide to bullets | The builder routing table and hard limits live in [`deck/SKILL.md`](deck/SKILL.md); the [20-type catalog](examples/build_catalog.py) proves the available forms. |
+| Keep one shared deck engine | Fork separate macOS and Windows builder repos | [`deck.py`](deck/scripts/deck.py) stays the source of truth; only dependency and render adapters vary by OS. This prevents visual behavior from drifting. |
+| Bundle Pretendard Regular and Bold | Assume the target computer already has the font | OS installers use the bundled OFL assets, and [`verify_pdf_fonts.py`](deck/scripts/verify_pdf_fonts.py) rejects missing embedding and narrow fallback fonts. The cost is about 3 MB of font assets in the repository. |
+| Make render verification part of delivery | Treat successful PPTX generation as completion | macOS rendering, PowerPoint/LibreOffice adapters, PDF checks, and committed artifacts expose clipping or substitution before handoff. |
+
+## Current Validation
+
+| Check | Result | Evidence |
+|---|---|---|
+| Automated contract suite | 7 tests PASS | Package, licensing, and PDF checks in [`tests/`](tests) run in [GitHub Actions](https://github.com/So-Yul-e/claude-deck-skill/actions/workflows/ci.yml) |
+| Builder coverage | 20 unique catalog pages | [`examples/build_catalog.py`](examples/build_catalog.py) asserts the exact page count |
+| PDF geometry | 20 pages, 16:9 | [Committed PDF](examples/output/deck-builder-catalog.pdf) is `959.981 × 540 pt` |
+| PDF typography | Pretendard Regular/Bold embedded; Arial Narrow and STHeiti rejected | [`verify_pdf_fonts.py`](deck/scripts/verify_pdf_fonts.py) and [font regression tests](tests/test_pdf_verifier.py) |
+| macOS runtime | Validated | Isolated Python environment, LibreOffice path, PowerPoint fallback, and `pdffonts` preflight |
+| Windows package path | CI PASS, adapter beta | `windows-latest` rebuilds the 20-page PPTX and runs [`test_windows_scripts.ps1`](tests/test_windows_scripts.ps1) |
+
+Run the repository-contained checks:
+
+```bash
+python3 -m unittest discover -s tests -p 'test_*.py'
+pwsh -NoProfile -File tests/test_windows_scripts.ps1
+bash deck/scripts/deps-macos.sh --check
+```
+
+Render and verify the catalog on macOS:
 
 ```bash
 DECK_PY="$(bash deck/scripts/deps-macos.sh --python)"
 "$DECK_PY" examples/build_catalog.py examples/output/deck-builder-catalog.pptx
-```
-
-Then render and verify it:
-
-```bash
 bash deck/scripts/render-macos.sh \
   examples/output/deck-builder-catalog.pptx \
   examples/output/deck-builder-catalog.pdf
 ```
 
-## Runtime Choices
-
-The shared deck engine is Python (`python-pptx` + Pillow). Rendering is
-platform-specific because Office and LibreOffice behave differently across
-operating systems.
-
-| Platform | Status | Renderer path |
-|---|---|---|
-| macOS | Validated | LibreOffice isolated profile, PowerPoint fallback |
-| Windows | Beta | PowerPoint COM PDF export, LibreOffice fallback |
-
-Pretendard Regular/Bold are bundled so PPTX layout and PDF export do not depend
-on whatever fonts happen to be installed on the machine. The font files remain
-under the SIL Open Font License 1.1 in `deck/assets/fonts/OFL.txt`.
-
-## Verified And Unverified
-
-Verified:
-
-- The installable [`deck/`](deck) payload passes the standard skill validator and
-  its local [package contract tests](tests/test_package_contract.py).
-- macOS generated the committed [20-slide builder catalog PPTX](examples/output/deck-builder-catalog.pptx)
-  and rendered it to a [20-page 16:9 PDF](examples/output/deck-builder-catalog.pdf).
-- [`verify_pdf_fonts.py`](deck/scripts/verify_pdf_fonts.py) confirmed embedded
-  Pretendard Regular/Bold and rejected Arial Narrow/STHeiti fallback fonts.
-- Windows scripts pass the [PowerShell contract checks](tests/test_windows_scripts.ps1),
-  prefer PowerPoint's documented `ppSaveAsPDF` value (`32`), and fall back to
-  LibreOffice. [Windows CI](.github/workflows/ci.yml) is configured to rebuild
-  the 20-page PPTX; its first hosted run occurs after publication.
-
-Not yet verified:
-
-- Windows full render parity on a physical Windows machine.
-- Linux dependency installation and render automation; no Linux adapter is claimed.
-- Corporate brand inference. If a project has design tokens, map them into the
-  palette explicitly.
-
-## Validation Commands
-
-```bash
-python3 -m unittest discover -s tests -p 'test_*.py'
-pwsh -NoProfile -File tests/test_windows_scripts.ps1
-python3 /path/to/skill-creator/scripts/quick_validate.py deck
-bash deck/scripts/deps-macos.sh --check
-pdfinfo examples/output/deck-builder-catalog.pdf
-pdffonts examples/output/deck-builder-catalog.pdf
-```
-
-## Project Layout
-
-```text
-deck/
-  SKILL.md
-  requirements.txt
-  agents/openai.yaml
-  scripts/
-    deck.py
-    polish.py
-    deps-macos.sh
-    deps-windows.ps1
-    render-macos.sh
-    render-windows.ps1
-    verify_pdf_fonts.py
-  assets/fonts/
-    Pretendard-Regular.otf
-    Pretendard-Bold.otf
-    OFL.txt
-examples/
-  build_catalog.py
-  make_gallery.py
-  output/
-    deck-builder-catalog.pptx
-    deck-builder-catalog.pdf
-    deck-builder-catalog-contact-sheet.png
-tests/
-  test_package_contract.py
-  test_pdf_verifier.py
-  test_windows_scripts.ps1
-```
-
-## Role And Scope
+## Creator, Role, and Evidence
 
 | Item | Detail |
 |---|---|
 | Creator | 윤소율 (So-Yul) |
-| Scope | Workflow design, builder rules, implementation, packaging, and render QA |
-| Team | One-person project with AI-assisted implementation and review |
+| Role | Workflow design, visual-system rules, implementation, packaging, and render QA |
+| Team | One-person project with AI-assisted implementation and independent AI review |
 | Period | 2026-08-04 to 2026-08-07 |
 
-This repository packages So-Yul's existing personal deck workflow into a public,
-portable Claude skill. The macOS behavior comes from the validated local skill;
-the Windows adapter is a portability layer added for public use.
+This repository packages So-Yul's existing personal deck workflow as a public,
+portable skill. Human ownership covers the problem framing, builder-selection
+rules, portability decisions, acceptance criteria, and release judgment; AI was
+used as an implementation and review lever.
+
+| Responsibility axis | Concrete evidence |
+|---|---|
+| Workflow planning | [`deck/SKILL.md`](deck/SKILL.md) defines routing, builder selection, hard limits, and the render-before-delivery contract. |
+| Visual system | [`deck.py`](deck/scripts/deck.py) fixes typography, spacing, palettes, hierarchy, and 18 builder methods. |
+| Cross-platform development | macOS and Windows dependency/render adapters live under [`deck/scripts/`](deck/scripts). |
+| Quality and release | Unit tests, PowerShell contract checks, CI, a 20-slide PPTX, a 20-page PDF, and a contact sheet are committed as evidence. |
+
+## Known Limits and Next Validation
+
+- **Windows PDF parity remains beta.** Windows CI verifies installation/render
+  script contracts and PPTX generation, but a physical Windows PowerPoint and
+  LibreOffice export comparison is still required.
+- **Linux is not supported.** No Linux dependency installer or render adapter is
+  claimed.
+- **Brand inference is intentionally absent.** The skill will not guess a
+  corporate identity; map an existing token system into a custom palette.
+- **Polish is conservative.** It adjusts hierarchy, padding, and noisy borders,
+  but does not automatically move boxes or resize body text because doing so can
+  introduce overflow.
+
+## Project Layout
+
+```text
+deck/                         # Installable skill payload
+  SKILL.md                    # Agent workflow and builder-selection contract
+  agents/openai.yaml          # Codex display metadata
+  scripts/
+    deck.py                   # Shared 18-builder presentation engine
+    polish.py                 # Conservative existing-deck cleanup
+    deps-macos.sh             # macOS runtime preflight/install
+    deps-windows.ps1          # Windows beta preflight/install
+    render-macos.sh           # macOS PDF export and verification
+    render-windows.ps1        # Windows beta PDF export and verification
+    verify_pdf_fonts.py       # Embedded-font and fallback guard
+  assets/fonts/               # Bundled Pretendard + OFL license
+examples/                     # 20-type builder catalog and outputs
+tests/                        # Package, PDF, and Windows script contracts
+.github/workflows/ci.yml      # Ubuntu and Windows quality gates
+THIRD_PARTY_NOTICES.md        # License boundary for bundled third-party assets
+```
+
+## Technology
+
+| Area | Choice | Why |
+|---|---|---|
+| PPTX generation | Python 3 + `python-pptx` | Produces editable Office documents with deterministic geometry |
+| Image handling | Pillow | Creates and fits raster evidence without flattening the whole deck |
+| PDF inspection | `pypdf` + Poppler `pdffonts` when available | Verifies font resources instead of trusting visual appearance alone |
+| macOS rendering | LibreOffice isolated profile, PowerPoint fallback | Repeatable CLI path with a native Office escape hatch |
+| Windows rendering | PowerPoint COM, LibreOffice fallback | Uses the platform's strongest native export path first |
+| Automation | GitHub Actions on Ubuntu and Windows | Prevents shared-core and OS-adapter regressions |
 
 ## License
 
-Code is [MIT licensed](LICENSE). Bundled Pretendard font files are licensed
-separately under the SIL Open Font License 1.1; see
-[`deck/assets/fonts/OFL.txt`](deck/assets/fonts/OFL.txt).
+Original project code and documentation are [MIT licensed](LICENSE). That means
+others may use, modify, redistribute, sublicense, or sell copies while retaining
+the copyright and permission notice.
+
+Bundled Pretendard font files are **not MIT licensed**. They remain under the
+SIL Open Font License 1.1 with their original copyright holders and Reserved
+Font Names. See [Third-Party Notices](THIRD_PARTY_NOTICES.md) and the complete
+[`OFL.txt`](deck/assets/fonts/OFL.txt).
