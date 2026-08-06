@@ -1,4 +1,4 @@
-<h1 align="center">Claude Deck Skill</h1>
+<h1 align="center">Deck Builder Skill</h1>
 
 <p align="center">
   <b>English</b> · <a href="README.ko.md">한국어</a>
@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/So-Yul-e/claude-deck-skill/actions/workflows/ci.yml"><img src="https://github.com/So-Yul-e/claude-deck-skill/actions/workflows/ci.yml/badge.svg" alt="CI status" /></a>
+  <a href="https://github.com/So-Yul-e/deck-builder-skill/actions/workflows/ci.yml"><img src="https://github.com/So-Yul-e/deck-builder-skill/actions/workflows/ci.yml/badge.svg" alt="CI status" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/code_license-MIT-blue.svg" alt="Code license: MIT" /></a>
 </p>
 
@@ -75,8 +75,8 @@ reject the result if the required fonts are not embedded.
 macOS for Claude:
 
 ```bash
-git clone https://github.com/So-Yul-e/claude-deck-skill.git
-cd claude-deck-skill
+git clone https://github.com/So-Yul-e/deck-builder-skill.git
+cd deck-builder-skill
 mkdir -p ~/.claude/skills
 ln -s "$(pwd)/deck" ~/.claude/skills/deck
 ```
@@ -84,8 +84,8 @@ ln -s "$(pwd)/deck" ~/.claude/skills/deck
 Windows PowerShell for Claude:
 
 ```powershell
-git clone https://github.com/So-Yul-e/claude-deck-skill.git
-$repo = (Resolve-Path ".\claude-deck-skill").Path
+git clone https://github.com/So-Yul-e/deck-builder-skill.git
+$repo = (Resolve-Path ".\deck-builder-skill").Path
 $target = "$HOME\.claude\skills\deck"
 New-Item -ItemType Directory -Force $target | Out-Null
 Copy-Item -Recurse -Force "$repo\deck\*" $target
@@ -186,7 +186,7 @@ intentionally excluded.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Automated contract suite | 8 tests PASS | Package, licensing, and PDF checks in [`tests/`](tests) run in [GitHub Actions](https://github.com/So-Yul-e/claude-deck-skill/actions/workflows/ci.yml) |
+| Automated contract suite | 8 tests PASS | Package, licensing, and PDF checks in [`tests/`](tests) run in [GitHub Actions](https://github.com/So-Yul-e/deck-builder-skill/actions/workflows/ci.yml) |
 | Builder coverage | 20 unique catalog pages | [`examples/build_catalog.py`](examples/build_catalog.py) asserts the exact page count |
 | PDF geometry | 20 pages, 16:9 | [Committed PDF](examples/output/deck-builder-catalog.pdf) is `959.981 × 540 pt` |
 | PDF typography | Pretendard Regular/Bold embedded; Arial Narrow and STHeiti rejected | [`verify_pdf_fonts.py`](deck/scripts/verify_pdf_fonts.py) and [font regression tests](tests/test_pdf_verifier.py) |

@@ -1,4 +1,4 @@
-<h1 align="center">Claude Deck Skill</h1>
+<h1 align="center">Deck Builder Skill</h1>
 
 <p align="center">
   <a href="README.md">English</a> · <b>한국어</b>
@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/So-Yul-e/claude-deck-skill/actions/workflows/ci.yml"><img src="https://github.com/So-Yul-e/claude-deck-skill/actions/workflows/ci.yml/badge.svg" alt="CI 상태" /></a>
+  <a href="https://github.com/So-Yul-e/deck-builder-skill/actions/workflows/ci.yml"><img src="https://github.com/So-Yul-e/deck-builder-skill/actions/workflows/ci.yml/badge.svg" alt="CI 상태" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/code_license-MIT-blue.svg" alt="코드 라이선스: MIT" /></a>
 </p>
 
@@ -73,8 +73,8 @@ LLM이 만드는 덱은 모든 아이디어를 불릿으로 바꾸기 쉽습니�
 Claude용 macOS 설치:
 
 ```bash
-git clone https://github.com/So-Yul-e/claude-deck-skill.git
-cd claude-deck-skill
+git clone https://github.com/So-Yul-e/deck-builder-skill.git
+cd deck-builder-skill
 mkdir -p ~/.claude/skills
 ln -s "$(pwd)/deck" ~/.claude/skills/deck
 ```
@@ -82,8 +82,8 @@ ln -s "$(pwd)/deck" ~/.claude/skills/deck
 Claude용 Windows PowerShell 설치:
 
 ```powershell
-git clone https://github.com/So-Yul-e/claude-deck-skill.git
-$repo = (Resolve-Path ".\claude-deck-skill").Path
+git clone https://github.com/So-Yul-e/deck-builder-skill.git
+$repo = (Resolve-Path ".\deck-builder-skill").Path
 $target = "$HOME\.claude\skills\deck"
 New-Item -ItemType Directory -Force $target | Out-Null
 Copy-Item -Recurse -Force "$repo\deck\*" $target
@@ -183,7 +183,7 @@ d.save("review.pptx")
 
 | 검사 | 결과 | 증거 |
 |---|---|---|
-| 자동 계약 테스트 | 8개 PASS | [`tests/`](tests)의 패키지·라이선스·PDF 검사를 [GitHub Actions](https://github.com/So-Yul-e/claude-deck-skill/actions/workflows/ci.yml)에서 실행 |
+| 자동 계약 테스트 | 8개 PASS | [`tests/`](tests)의 패키지·라이선스·PDF 검사를 [GitHub Actions](https://github.com/So-Yul-e/deck-builder-skill/actions/workflows/ci.yml)에서 실행 |
 | Builder 범위 | 고유 카탈로그 20페이지 | [`examples/build_catalog.py`](examples/build_catalog.py)가 정확한 페이지 수를 assertion으로 고정 |
 | PDF 규격 | 20페이지, 16:9 | [커밋된 PDF](examples/output/deck-builder-catalog.pdf)는 `959.981 × 540 pt` |
 | PDF 타이포그래피 | Pretendard Regular/Bold 임베딩, Arial Narrow·STHeiti 거부 | [`verify_pdf_fonts.py`](deck/scripts/verify_pdf_fonts.py)와 [폰트 회귀 테스트](tests/test_pdf_verifier.py) |
