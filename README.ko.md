@@ -183,7 +183,7 @@ d.save("review.pptx")
 
 | 검사 | 결과 | 증거 |
 |---|---|---|
-| 자동 계약 테스트 | 7개 PASS | [`tests/`](tests)의 패키지·라이선스·PDF 검사를 [GitHub Actions](https://github.com/So-Yul-e/claude-deck-skill/actions/workflows/ci.yml)에서 실행 |
+| 자동 계약 테스트 | 8개 PASS | [`tests/`](tests)의 패키지·라이선스·PDF 검사를 [GitHub Actions](https://github.com/So-Yul-e/claude-deck-skill/actions/workflows/ci.yml)에서 실행 |
 | Builder 범위 | 고유 카탈로그 20페이지 | [`examples/build_catalog.py`](examples/build_catalog.py)가 정확한 페이지 수를 assertion으로 고정 |
 | PDF 규격 | 20페이지, 16:9 | [커밋된 PDF](examples/output/deck-builder-catalog.pdf)는 `959.981 × 540 pt` |
 | PDF 타이포그래피 | Pretendard Regular/Bold 임베딩, Arial Narrow·STHeiti 거부 | [`verify_pdf_fonts.py`](deck/scripts/verify_pdf_fonts.py)와 [폰트 회귀 테스트](tests/test_pdf_verifier.py) |

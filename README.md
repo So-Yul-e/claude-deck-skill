@@ -186,7 +186,7 @@ intentionally excluded.
 
 | Check | Result | Evidence |
 |---|---|---|
-| Automated contract suite | 7 tests PASS | Package, licensing, and PDF checks in [`tests/`](tests) run in [GitHub Actions](https://github.com/So-Yul-e/claude-deck-skill/actions/workflows/ci.yml) |
+| Automated contract suite | 8 tests PASS | Package, licensing, and PDF checks in [`tests/`](tests) run in [GitHub Actions](https://github.com/So-Yul-e/claude-deck-skill/actions/workflows/ci.yml) |
 | Builder coverage | 20 unique catalog pages | [`examples/build_catalog.py`](examples/build_catalog.py) asserts the exact page count |
 | PDF geometry | 20 pages, 16:9 | [Committed PDF](examples/output/deck-builder-catalog.pdf) is `959.981 × 540 pt` |
 | PDF typography | Pretendard Regular/Bold embedded; Arial Narrow and STHeiti rejected | [`verify_pdf_fonts.py`](deck/scripts/verify_pdf_fonts.py) and [font regression tests](tests/test_pdf_verifier.py) |
